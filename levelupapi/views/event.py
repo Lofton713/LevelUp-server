@@ -38,6 +38,11 @@ class EventView(ViewSet):
         game_id = request.query_params.get('game', None)
         if game_id is not None:
             events = events.filter(game_id=game_id)
+            
+        # Set the `joined` property on every event
+        for event in events:
+            # Check to see if the gamer is in the attendees list on the event
+            event.joined = Gamer in event.attendees.all()
         
         serializer = EventSerializer(events, many=True)
         return Response(serializer.data)
